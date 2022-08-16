@@ -2,24 +2,7 @@ const request = require('supertest');
 const app = require("../app");
 
 describe('Space test suite', () => {
-    expect.extend({
-        toBeActive(received) {
-            const pass = received === true;
-            if (pass) {
-                return {
-                    message: () =>
-                        `expected ${received} to be an acceptable flight status`,
-                    pass: true,
-                };
-            } else {
-                return {
-                    message: () =>
-                        `expected ${received} to be an acceptable flight status of flight - only true is acceptable`,
-                    pass: false,
-                };
-            }
-        },
-    });
+   
     test('tests /destinations endpoints', async() => {
         const response = await request(app).get("/space/destinations");
         expect(response.body).toEqual(["Mars", "Moon", "Earth", "Mercury", "Venus", "Jupiter"]);
@@ -59,19 +42,21 @@ describe('Space test suite', () => {
                 staticMode : expect.arrayContaining(['plaid'])}) })
         })]));
     });
-
-    test('tests /space/flights/seats endpoint - starship', async () => { 
+    test('tests /space/flights endpoint - positive test', async () => {
         const response = await request(app).get("/space/flights/seats");
-        expect(response.body.starship)
-        .toEqual(expect.arrayContaining([expect.objectContaining({
-            firstClass: expect(response.body.seatHover).toBeActive()
-                
-        })]));
-
+        const expected = true;
+        console.log(JSON.stringify(response.body))
+       expect(response.body.starship[0].firstClass.heatedSeats).toEqual(true)
     });
     
-    test('tests /space/flights endpoint - positive test', async () => {
-        const response = await request(app).get("/space/flights");
-        expect(response.body[0].active).toBeActive();
-    });
+    
+    // test('tests /space/flights endpoint - positive test', async () => {
+    //     const response = await request(app).get("/space/flights");
+    //     const expected = true;
+    //      expect(response.body.starship)
+    //     .toEqual(expect.arrayContaining([expect.objectContaining({
+    //         firstClass: expect.objectContaining({ heatedSeats: expect.(expected) })
+    //     })]));
+    //     // expect(response.body.starship[].firstClass.heatedSeats).toEqual(true)
+    // });
 })
